@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <thread>
+#include <string.h>
 #include "ZDV-207-client.h"
 int main() {
     
@@ -22,12 +23,14 @@ int main() {
             perror("error opening file");
             continue;
         }
-        std::thread([=](){
+        
+        std::thread([=](){ //исполняем запросы асинхронно
             char cmbuf [4096];
             char rdbuf [4096];
             int cmdno = 0;
             while (fgets(cmbuf, 4095, fin)) {
                 cmbuf[strlen(cmbuf)-1]=0; //Уберём символ перехода строки, иначе плохо
+                fprintf(fout, "_________\n");
                 FILE * client = Client::request(cmbuf, "127.0.0.1", 3228); // Получаем ответ сервера
                 while (fgets(rdbuf, 4095, client)) {
                     fprintf(fout, "%s", rdbuf); //Печатаем ответ
@@ -43,10 +46,6 @@ int main() {
     }
     char rd[10];
     scanf("%s",rd);
-    
-    
 
-    
-    
     return 0;
 }
